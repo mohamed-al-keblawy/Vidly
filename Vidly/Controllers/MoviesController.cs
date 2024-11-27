@@ -28,12 +28,59 @@ namespace Vidly.Controllers
             var movies = _dbContext.Movies.Include(c => c.Genre).ToList();
             return View(movies);
         }
+        public ActionResult New()
+        {
+            var genres = _dbContext.Genres.ToList();
+            var viewModel = new MovieFormViewModel
+            {
+                Genres = genres
+            };
+            return View("MovieForm" ,viewModel);
+        }
+
         public ActionResult Details(int id)
         {
             var movie = _dbContext.Movies.Include(c => c.Genre).FirstOrDefault(c => c.Id == id);
             if (movie == null)
                 return HttpNotFound();
             return View(movie);
+        }
+        public ActionResult Edit(int id)
+        {
+            var movie = _dbContext.Movies.SingleOrDefault(c => c.Id == id);
+
+            if (movie == null)
+                return HttpNotFound();
+
+            var viewModel = new MovieFormViewModel
+            {
+                Movie = movie,
+                Genres = _dbContext.Genres.ToList()
+            };
+
+            return View("MovieForm", viewModel);
+        }
+
+        [HttpPost]
+        public ActionResult Save(Movie movie)
+        {
+            if (movie.Id == 0)
+            {
+                movie.DateAdded = DateTime.Now;
+                _dbContext.Movies.Add(movie);
+            }
+            else
+            {
+                var movieInDb = _dbContext.Movies.Single(m => m.Id == movie.Id);
+                movieInDb.Name = movie.Name;
+                movieInDb.GenreId = movie.GenreId;
+                movieInDb.NumberInStock = movie.NumberInStock;
+                movieInDb.ReleaseDate = movie.ReleaseDate;
+            }
+
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("Index", "Movies");
         }
 
         private IEnumerable<Movie> GetMovies()
@@ -66,10 +113,10 @@ namespace Vidly.Controllers
         }
 
         // GET: Movies/Edit/1
-        public ActionResult Edit(int id)
-        {
-            return Content("Id = " + id);
-        }
+        //public ActionResult Edit(int id)
+        //{
+        //    return Content("Id = " + id);
+        //}
 
         // GET: Movies/Index?pageIndex=1,sortBy='Name'
         //public ActionResult Index(int? pageIndex, string sortBy)
