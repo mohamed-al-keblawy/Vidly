@@ -17,6 +17,7 @@
             <label for="BirthDate">Date of Birth</label>*@
         @Html.LabelFor(m => m.Customer.BirthDate)
         @Html.TextBoxFor(m => m.Customer.BirthDate, "{0:d MMM yyyy}", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.BirthDate)
     </div>
     <div class="from-group">
         @Html.LabelFor(m => m.Customer.MembershipTypeId)
