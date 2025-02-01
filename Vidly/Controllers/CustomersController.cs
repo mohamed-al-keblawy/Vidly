@@ -48,6 +48,7 @@ namespace Vidly.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Save(Customer customer) // could use UpdateCustomerDto Data transfer object
         {
             if (!ModelState.IsValid)
